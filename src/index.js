@@ -41,49 +41,45 @@ module.exports = function toReadable(number) {
     }
 
     function getTens(num) {
-        num = (num % 100).toString();
+        num = num % 100;
 
-        /*01 - 09 */
+        /* 01 - 09 */
         if (num < 10) {
             return getUnits(num);
         }
 
-        /*10 - 19*/
-        if (num[0] == 1) {
-            return teen[num[1]];
+        /* 10 - 19 */
+        if (num >= 10 && num < 20) {
+            return teen[num % 10];
         }
 
         /* 20 - 99 */
-        if (num[0] > 1) {
-            // 20, 30, 40 ...
-            if (num[1] == 0) {
-                return tens[num[0] - 2];
-            } else {
-                //21, 22...
-                return `${tens[num[0] - 2]} ${getUnits(num[1])}`;
-            }
+        if (num >= 20 && num < 100) {
+            let _tens = Math.floor(num / 10);
+
+            return num % 10 === 0
+                ? tens[_tens - 2] //20, 30, .. 90
+                : `${tens[_tens - 2]} ${getUnits(num % 10)}`;
         }
     }
 
     function getHundreds(num) {
-        if (num % 100 == 0) {
-            return `${getUnits(num[0])} hundred`;
-        } else {
-            return `${getUnits(num[0])} hundred ${getTens(num)}`;
-        }
+        let hundreds = Math.floor(num / 100);
+
+        return num % 100 === 0
+            ? `${getUnits(hundreds)} hundred`
+            : `${getUnits(hundreds)} hundred ${getTens(num)}`;
     }
 
-    number = number.toString();
-
-    if (number.length === 1) {
+    if (number < 10) {
         return getUnits(number);
     }
 
-    if (number.length === 2) {
+    if (number < 100) {
         return getTens(number);
     }
 
-    if (number.length === 3) {
+    if (number < 1000) {
         return getHundreds(number);
     }
 };
